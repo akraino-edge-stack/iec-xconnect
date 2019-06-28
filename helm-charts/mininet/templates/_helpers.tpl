@@ -46,3 +46,25 @@ Create chart name and version as used by the chart label.
 {{- define "mininet.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Generate the CNI annotations depending on number of OLTs
+*/}}
+{{- define "mininet.cni" -}}
+{{- printf "nsx" -}}
+{{- range $i, $junk := until (.Values.numOlts|int) -}}
+{{- printf ",nni%d" $i -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Generate the DHCP subnets depending on number of OLTs
+*/}}
+{{- define "mininet.dhcp_range" -}}
+{{- $onucount := .Values.numOnus|int}}
+{{- range $i, $junk := until (.Values.numOlts|int) -}}
+{{- range $j, $junk1 := until ($onucount) -}}
+{{- printf " --dhcp-range=172.%d.%d.50,172.%d.%d.150,12h" (add $i 19) $j (add $i 19) $j -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

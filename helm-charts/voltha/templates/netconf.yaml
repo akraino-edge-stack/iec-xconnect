@@ -40,7 +40,7 @@ spec:
       labels:
         app: netconf
       annotations:
-        cni: "calico"
+        cni: "nsx"
     spec:
       serviceAccountName: {{ .Values.global.namespace }}-serviceaccount
       terminationGracePeriodSeconds: 10

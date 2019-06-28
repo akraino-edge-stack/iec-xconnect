@@ -45,8 +45,8 @@ affinity:
             - olt
         topologyKey: kubernetes.io/hostname
 
-annotations:
-  cni: "calico,pon1"
-
 onosOpenflowSvc: "onos-openflow.default.svc.cluster.local"
-vlanMatchDepth: 2
+vlanMatchDepth: 1
+enableMulticast: false
+numOlts: 1
+numOnus: 1

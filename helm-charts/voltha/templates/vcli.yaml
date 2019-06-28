@@ -44,7 +44,7 @@ spec:
       labels:
         app: vcli
       annotations:
-        cni: "calico"
+        cni: "nsx"
     spec:
       serviceAccountName: {{ .Values.global.namespace }}-serviceaccount
       containers:

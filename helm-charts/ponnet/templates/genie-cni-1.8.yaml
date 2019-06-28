@@ -140,7 +140,7 @@ data:
         "type": "genie",
         "log_level": "info",
         "datastore_type": "kubernetes",
-        "default_plugin": "calico",
+        "default_plugin": "nsx",
         "hostname": "__KUBERNETES_NODE_NAME__",
         "policy": {
             "type": "k8s",

@@ -81,7 +81,7 @@ metadata:
 data:
   install-certs.sh: |
     # Copied from Calico
-    # https://github.com/projectcalico/cni-plugin/blob/master/k8s-install/scripts/install-cni.sh
+    # https://github.com/projectnsx/cni-plugin/blob/master/k8s-install/scripts/install-cni.sh
     touch /host/etc/cni/net.d/multus-kubeconfig
     chmod 600 /host/etc/cni/net.d/multus-kubeconfig
     SERVICE_ACCOUNT_PATH=/var/run/secrets/multus/serviceaccount

@@ -19,6 +19,9 @@ imports:
   - custom_types/onudevice.yaml
   - custom_types/ponport.yaml
   - custom_types/voltservice.yaml
+  {{- if $.Values.bandwidthProfiles }}
+  - custom_types/technologyprofile.yaml
+  {{- end }}
 description: Create a simulated OLT Device in VOLTHA
 topology_template:
   node_templates:
@@ -29,29 +32,103 @@ topology_template:
         name: volt
         must-exist: true
 
-    olt_device:
+{{- range $i, $junk := until (.Values.numOlts|int) }}
+
+    olt{{ $i }}_device:
       type: tosca.nodes.OLTDevice
       properties:
-        name: PONSIM OLT
+        name: PONSIM OLT {{ $i }}
         device_type: ponsim_olt
-        host: olt.voltha.svc
+        host: olt{{ $i }}.voltha.svc
         port: 50060
         switch_datapath_id: of:0000000000000001
-        switch_port: "2"
+        switch_port: "{{ add 2 $i }}"
         outer_tpid: "0x8100"
+{{- if $.Values.bandwidthProfiles }}
+        technology: xgspon
+{{- end }}
+{{- if $.Values.legacyPonsim }}
         dp_id: of:0000aabbccddeeff
+{{- else }}
+        dp_id: {{ index $.Values.oltDpids $i }}
+{{- end }}
         uplink: "2"
       requirements:
         - volt_service:
             node: service#volt
             relationship: tosca.relationships.BelongsToOne
 
-    pon_port:
+    olt{{ $i }}_pon_port:
       type: tosca.nodes.PONPort
       properties:
-        name: pon0
+        name: olt{{ $i }}pon0
         port_no: 1
       requirements:
         - olt_device:
-            node: olt_device
+            node: olt{{ $i }}_device
             relationship: tosca.relationships.BelongsToOne
+{{- end }}
+
+{{- if $.Values.bandwidthProfiles }}
+    technologyProfile:
+      type: tosca.nodes.TechnologyProfile
+      properties:
+        profile_id: 64
+        technology: xgspon
+        profile_value: >
+          {
+            "name": "4QueueHybridProfileMap1",
+            "profile_type": "XPON",
+            "version": 1.0,
+            "num_gem_ports": 1,
+            "instance_control": {
+              "onu": "multi-instance",
+              "uni": "single-instance",
+              "max_gem_payload_size": "auto"
+            },
+            "us_scheduler": {
+              "additional_bw": "auto",
+              "direction": "UPSTREAM",
+              "priority": 0,
+              "weight": 0,
+              "q_sched_policy": "hybrid"
+            },
+            "ds_scheduler": {
+              "additional_bw": "auto",
+              "direction": "DOWNSTREAM",
+              "priority": 0,
+              "weight": 0,
+              "q_sched_policy": "hybrid"
+            },
+            "upstream_gem_port_attribute_list": [{
+                "pbit_map": "0b11000000",
+                "aes_encryption": "TRUE",
+                "scheduling_policy": "Strict-Priority",
+                "priority_q": 1,
+                "weight": 0,
+                "discard_policy": "Tail-Drop",
+                "max_q_size": "auto",
+                "discard_config": {
+                  "min_threshold": 0,
+                  "max_threshold": 0,
+                  "max_probability": 0
+                }
+              }
+            ],
+            "downstream_gem_port_attribute_list": [{
+                "pbit_map": "0b11000000",
+                "aes_encryption": "TRUE",
+                "scheduling_policy": "Strict-Priority",
+                "priority_q": 1,
+                "weight": 0,
+                "discard_policy": "Tail-Drop",
+                "max_q_size": "auto",
+                "discard_config": {
+                  "min_threshold": 0,
+                  "max_threshold": 0,
+                  "max_probability": 0
+                }
+              }
+            ]
+          }
+{{- end }}

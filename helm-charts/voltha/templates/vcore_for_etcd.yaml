@@ -55,7 +55,7 @@ spec:
       labels:
         app: vcore
       annotations:
-        cni: "calico"
+        cni: "nsx"
     spec:
       terminationGracePeriodSeconds: 0
       serviceAccountName: {{ .Values.global.namespace }}-serviceaccount

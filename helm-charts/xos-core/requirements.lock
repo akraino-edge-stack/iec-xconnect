@@ -1,0 +1,9 @@
+dependencies:
+- name: xos-db
+  repository: file://../xos-db
+  version: 1.0.1
+- name: xos-gui
+  repository: file://../xos-gui
+  version: 1.2.4
+digest: sha256:e86e82edcb31f76863315c82b076e4e560a0bbd8ae829f35af0ef71e9d68893d
+generated: "2019-06-19T06:57:31.958304319Z"
