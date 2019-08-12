@@ -1,0 +1,9 @@
+.idea/
+*.pyc
+.DS_Store
+
+.coverage
+htmlcov
+coverage.xml
+nose2-junit.xml
+
