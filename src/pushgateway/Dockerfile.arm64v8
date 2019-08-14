@@ -1,0 +1,10 @@
+FROM        arm64v8/busybox:latest
+LABEL maintainer "The Prometheus Authors <prometheus-developers@googlegroups.com>"
+
+COPY pushgateway /bin/pushgateway
+RUN chmod +x /bin/pushgateway
+
+EXPOSE     9091
+RUN mkdir -p /pushgateway
+WORKDIR    /pushgateway
+ENTRYPOINT [ "/bin/pushgateway" ]
