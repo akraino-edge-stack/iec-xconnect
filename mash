@@ -1,42 +1,7 @@
-stioctl manifest generate --set values.gateways.istio-egressgateway.enabled=false --set values.gateways.istio-ingressgateway.sds.enabled=true > ./istio-ingressgateway.yaml
-
-:$
-cd /Users/xinhui.li/go/src/github.com/istio-managing-apps-kubernetes
-sudo  cp -r * /Users/xinhui.li/Downloads/eks/istio-1.7.3/demos/
-
-ssh -i "lxh-kp.pem" ec2-user@44.241.41.215
-curl -H "Host: ad29778f1b27046fc9ebe0413741901f-6724d8ee316606c2.elb.us-west-2.amazonaws.com" "http://$INGRESS_HOST:$INGRESS_PORT/headers?show_env=1"
-http://ad29778f1b27046fc9ebe0413741901f-6724d8ee316606c2.elb.us-west-2.amazonaws.com/headers?show_env=1
-
-kubectl rollout pause deployment istio-ingressgateway -n istio-system
-
-kubectl get pod -n istio-system
-kubectl exec istio-ingressgateway-85866b6679-xdsjs -n istio-system -c istio-proxy -- curl 'localhost:15000/config_dump' > config_dump.json
-kubectl exec istio-ingressgateway-85866b6679-zjsqd -c istio-proxy -- curl 'localhost:15000/stats' > stats
-kubectl exec istio-ingressgateway-85866b6679-zjsqd -n istio-system -c istio-proxy -- curl 'localhost:15000/clusters' > clusters
-kubectl logs istio-ingressgateway-85866b6679-zjsqd -n istio-system -c istio-proxy > proxy.log
-
-name: istio-ingressgateway
-curl --interface utun1 -H "Host: a7099e53576e541278c6b9c69b71bf53-75bc8e7536570e2e.elb.us-west-2.amazonaws.com" -H "Pepe: bububu" http://proxyddostest02.duckdns.org/headers
-
-
-
-ssh -i ec2-user@44.231.113.107
-
-
-curl -v -HHost:httpbin.example.com --resolve "$INGRESS_HOST:$SECURE_INGRESS_PORT:$INGRESS_HOST" \
---cacert new_certificates/example.com.crt "https://$INGRESS_HOST:$SECURE_INGRESS_PORT/status/418"
-
-
-a25fa0b4835bf460588ee5002b857c36-1ccd5b150ee87ab2.elb.us-west-2.amazonaws.com
-
-openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=example Inc./CN=example.com' -keyout example.com.key -out example.com.crt
-openssl req -out httpbin.example.com.csr -newkey rsa:2048 -nodes -keyout httpbin.example.com.key -subj "/CN=a25fa0b4835bf460588ee5002b857c36-1ccd5b150ee87ab2.elb.us-west-2.amazonaws.com/O=httpbin organization"
-openssl x509 -req -days 365 -CA example.com.crt -CAkey example.com.key -set_serial 0 -in httpbin.example.com.csr -out httpbin.example.com.crt
-
-curl -vvv -H "Host: acb7ca2ca2f3a498c822f3786553a075-7fb58ba389cbc75b.elb.us-west-2.amazonaws.com"  --cacert new_certificates/example.com.crt "https://acb7ca2ca2f3a498c822f3786553a075-7fb58ba389cbc75b.elb.us-west-2.amazonaws.com:443/headers?show_env=1"
-
-
-
-
-
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  meshConfig:
+    defaultConfig:
+      gatewayTopology:
+        numTrustedProxies: 2
