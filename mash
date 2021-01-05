@@ -1,22 +1,13 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: EnvoyFilter
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
 metadata:
-  name: ingressgateway-settings
   namespace: istio-system
+  name: example-istiocontrolplane
 spec:
-  configPatches:
-  - applyTo: NETWORK_FILTER
-    match:
-      listener:
-        filterChain:
-          filter:
-            name: envoy.http_connection_manager
-    patch:
-      operation: MERGE
-      value:
-        name: envoy.http_connection_manager
-        typed_config:
-          "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
-          skip_xff_append: false
-          use_remote_address: true
-          xff_num_trusted_hops: 1
+  profile: demo
+  ingressGateways:
+    name: istio-ingressgateway
+    namespace: istio-system
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
